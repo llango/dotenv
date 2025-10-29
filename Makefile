@@ -1,7 +1,8 @@
 .PHONY: test
 
 test:
-	pixi run test 
+	chmod +x scripts/run_tests.sh
+	./scripts/run_tests.sh 
 
 package:
 	pixi run mojo package  src/dotenv -o dotenv.mojopkg

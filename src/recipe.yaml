@@ -10,7 +10,7 @@ package:
 source:
   - path: .
   - path: ../LICENSE
-  - path: ../test.mojo
+  - path: ../tests/test_main.mojo
 
 build:
   script:
@@ -27,7 +27,9 @@ tests:
       # commands to run to test the package. If any of the commands
       # returns with an error code, the test is considered failed.
       # if I don't copy everything into a test dir, pixi test runs the tests in the .pixi dir and fails :|
-      - pixi run test
+      - pixi run mojo package dotenv  # 打包
+      - pixi run mojo install dotenv.mojopkg  # 安装
+      - pixi run mojo run tests/test_main.mojo  # 测试
 
     files:
       # Extra files to be copied to the test directory from the "work directory"
