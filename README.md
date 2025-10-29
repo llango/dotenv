@@ -16,11 +16,13 @@ make package
 
 ## test
 
-```bash
-pixi run test 
+first :
+
+```
+pixi add dotenv
 ```
 
-or 
+then :
 
 ```bash
 make test
