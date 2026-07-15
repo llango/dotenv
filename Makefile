@@ -6,6 +6,7 @@ help:
 	@echo "  make test      - Run tests"
 	@echo "  make package   - Precompile Mojo files"
 	@echo "  make upload    - Upload package to Prefix"
+	@echo "  make publish   - Publish package to Prefix"
 	@echo "  make build     - Build the project"
 	@echo "  make doc       - Serve documentation"
 	@echo "  make shell     - Open a shell"
@@ -21,8 +22,12 @@ package:
 upload:
 	export PREFIX_API_KEY=${PREFIX_API_KEY} & bash scripts/publish.sh
 
+
+publish:
+	export PREFIX_API_KEY=${PREFIX_API_KEY} & bash scripts/publish.sh
+
 build:
-	rattler-build build -r src -c https://prefix.dev/mojo-force -c https://repo.prefix.dev/modular-community -c https://conda.modular.com/max-nightly -c conda-forge --skip-existing=all
+	rattler-build build -r src -c https://prefix.dev/mojo-force -c https://repo.prefix.dev/modular-community -c https://conda.modular.com/max -c conda-forge --skip-existing=all
 
 doc:
 	mkdocs serve
