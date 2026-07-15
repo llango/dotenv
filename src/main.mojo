@@ -2,7 +2,7 @@ from dotenv import load_dotenv, get_key, set_key, dotenv_keys
 
 
 # 使用示例
-fn main() raises:
+def main() raises:
     # 加载 .env 文件
     load_dotenv()
     
@@ -19,7 +19,4 @@ fn main() raises:
     
     # 获取所有 .env 文件中的键
     var keys = dotenv_keys()
-
-    for item in keys:
-        print(item)
-    print("所有键:", keys.__str__())
+    print("所有键:", keys)

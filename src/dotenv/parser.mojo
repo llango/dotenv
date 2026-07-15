@@ -1,16 +1,15 @@
-from os import getenv, setenv
-from pathlib import Path, cwd
-from collections import Dict, List
+from std.os import getenv, setenv
+from std.pathlib import Path, cwd
+from std.collections import Dict, List
 
 
-fn load_dotenv() raises -> None:
-    """
-    Load the .env file from the current working directory.
-    """
-    var cwd = cwd()
-    var dotenv_path = cwd / ".env"
+def _parse_dotenv() raises -> Dict[String, String]:
+    """Read and parse the .env file, returning key-value pairs as a Dict."""
+    var current_dir = cwd()
+    var dotenv_path = current_dir / ".env"
+    var env_dict = Dict[String, String]()
     if not dotenv_path.exists():
-        return
+        return env_dict^
 
     with open(String(dotenv_path), "r") as f:
         file = f.read()
@@ -19,67 +18,51 @@ fn load_dotenv() raises -> None:
     for i in range(len(lines)):
         var line = lines[i]
         var stripped_line = line.strip()
-        if not stripped_line.startswith("#") and len(stripped_line) > 0:
+        if not stripped_line.startswith("#") and stripped_line.byte_length() > 0:
             var key_value = stripped_line.split("=", 1)  # 只分割第一个等号
             if len(key_value) >= 2:
-                var key = "".join(key_value[0].strip())
-                var value = StringSlice(key_value[1].strip())
-                print("key::::::::::::::::::::::", key)
-                print("value::::::::::::::::::::", value)
+                var key = String(key_value[0].strip())
+                var value_str = String(key_value[1].strip())
                 # 移除引号（如果存在）
-                if (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'")):
-                    value_1 = value[1:-1].__str__()
+                var value_1: String
+                if (value_str.startswith('"') and value_str.endswith('"')) or (value_str.startswith("'") and value_str.endswith("'")):
+                    value_1 = String(value_str[byte=1: value_str.byte_length() - 1])
                 else:
-                    value_1 = value.__str__()
-                _ = setenv(key, value_1, True)
+                    value_1 = value_str
+                env_dict[key] = value_1
+
+    return env_dict^
 
 
-fn dotenv_dict() raises -> Dict[String, String]:
+def load_dotenv() raises -> None:
+    """
+    Load the .env file from the current working directory into environment variables.
+    """
+    var env_dict = _parse_dotenv()
+    for item in env_dict.items():
+        _ = setenv(item.key, item.value, True)
+
+
+def dotenv_dict() raises -> Dict[String, String]:
     """
     Return a dictionary of the key-value pairs in the .env file.
     """
-    var cwd = cwd()
-    var dotenv_path = cwd / ".env"
-    var dict = Dict[String, String]()
-    if not dotenv_path.exists():
-        return dict^
-
-    try:
-        with open(String(dotenv_path), "r") as f:
-            file = f.read()
-
-        var lines = file.split("\n")
-        for i in range(len(lines)):
-            var line = lines[i]
-            var stripped_line = line.strip()
-            if not stripped_line.startswith("#") and len(stripped_line) > 0:
-                var key_value = stripped_line.split("=", 1)  # 只分割第一个等号
-                if len(key_value) >= 2:
-                    var key = "".join(key_value[0].strip())
-                    var value = StringSlice(key_value[1].strip())
-                    # 移除引号（如果存在）
-                    if (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'")):
-                        value_1 = value[1:-1].__str__()
-                    else:
-                        value_1 = value.__str__()
-                    dict[key] = value_1
-    except:
-        print("Error loading .env file")
-    return dict^
+    return _parse_dotenv()
 
 
-fn dotenv_keys() raises -> List[String]:
+def dotenv_keys() raises -> List[String]:
     """
     Return a list of the keys in the .env file.
     """
     var keys = List[String]()
     var env_dict = dotenv_dict()
+    print("env_dict: ", env_dict)
     for item in env_dict.items():
         keys.append(item.key)
     return keys^
 
 
-fn dotenv_values() raises -> List[String]:
+def dotenv_values() raises -> List[String]:
     """
     Return a list of the values in the .env file.
     """
@@ -90,14 +73,14 @@ fn dotenv_values() raises -> List[String]:
     return values^
 
 
-fn get_key(key_name: String, default: String = "") -> String:
+def get_key(key_name: String, default: String = "") -> String:
     """
     Get the key from the .env file or environment variables.
     """
     return getenv(key_name, default)
 
 
-fn set_key(key_name: String, value: String) -> Bool:
+def set_key(key_name: String, value: String) -> Bool:
     """
     Set the key in environment variables.
     Returns True if successful, False otherwise.

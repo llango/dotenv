@@ -15,26 +15,26 @@ source:
 build:
   script:
     - mkdir -p ${PREFIX}/lib/mojo
-    - pixi run mojo package dotenv
-    - cp dotenv.mojopkg ${PREFIX}/lib/mojo/dotenv.mojopkg
+    - pixi run mojo precompile dotenv
+    - cp dotenv.mojoc ${PREFIX}/lib/mojo/dotenv.mojoc
 
 requirements:
   run:
-    - mojo >= 0.25.6
+    - mojo >= 1.0.0b2
 
 tests:
   - script:
       # commands to run to test the package. If any of the commands
       # returns with an error code, the test is considered failed.
       # if I don't copy everything into a test dir, pixi test runs the tests in the .pixi dir and fails :|
-      - pixi run mojo package dotenv  # 打包
-      - pixi run mojo install dotenv.mojopkg  # 安装
+      - pixi run mojo precompile dotenv  # 打包
+      - pixi run mojo install dotenv.mojoc  # 安装
       - pixi run mojo run tests/test_main.mojo  # 测试
 
     files:
       # Extra files to be copied to the test directory from the "work directory"
       source:
-        - dotenv.mojopkg
+        - dotenv.mojoc
         - pixi.toml
         - test.mojo
 
